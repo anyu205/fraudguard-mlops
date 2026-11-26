@@ -1,0 +1,25 @@
+# Python-generated files
+__pycache__/
+.pytest_cache/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Data and sensitive keys
+data/raw
+data/processed
+*.csv
+*.parquet
+.env
+mlruns/
+
+# Init and log files
+
+# Personal study notes
+docs/
+spec.md

@@ -1,0 +1,28 @@
+[project]
+name = "mlops"
+version = "0.1.0"
+description = "MLops project for Credit Card Fraud Detection"
+readme = "README.md"
+authors = [
+    { name = "anyu205", email = "https://github.com/anyu205" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "kagglehub>=1.0.3",
+    "numpy>=2.4.6",
+    "pandas>=3.1.1",
+    "pyarrow>=26.0.1",
+]
+
+[project.scripts]
+mlops = "mlops:main"
+
+[build-system]
+requires = ["uv_build>=0.13.10,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "ruff>=0.17.6",
+]
