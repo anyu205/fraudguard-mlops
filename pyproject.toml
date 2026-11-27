@@ -8,10 +8,16 @@ authors = [
 ]
 requires-python = ">=3.11"
 dependencies = [
+    "joblib>=1.6.0",
     "kagglehub>=1.0.3",
+    "lightgbm>=4.7.0",
     "numpy>=2.4.6",
     "pandas>=3.1.1",
+    "pandera>=0.36.0",
     "pyarrow>=26.0.1",
+    "pyyaml>=6.0.4",
+    "rich>=15.0.0",
+    "scikit-learn>=1.9.1",
 ]
 
 [project.scripts]
@@ -26,3 +32,7 @@ dev = [
     "pytest>=9.2.0",
     "ruff>=0.17.6",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

@@ -17,6 +17,7 @@ data/processed
 *.parquet
 .env
 mlruns/
+artifacts/
 
 # Init and log files
 

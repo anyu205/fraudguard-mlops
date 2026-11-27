@@ -1,7 +1,8 @@
-.PHONY: help lint test
+.PHONY: help lint test format rfix
 .DEFAULT_GOAL := help
 
 UV := uv run
+path ?= .
 
 help:
 	@echo Available commands:
@@ -13,3 +14,9 @@ lint:
 
 test:
 	$(UV) pytest
+
+format:
+	$(UV) ruff format $(path)
+
+rfix:
+	$(UV) ruff check --fix

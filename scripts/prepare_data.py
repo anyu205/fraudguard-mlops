@@ -59,16 +59,16 @@ def split_by_time(
     """Split sorted dataset chronologically into v1, v2, and v3."""
     if not (v1_ratio > 0 and v2_ratio > 0 and v1_ratio + v2_ratio < 1):
         raise ValueError("Value of v1 or v2 is not correct!")
-    
+
     idx1 = int(len(df) * v1_ratio)
     idx2 = int(len(df) * (v1_ratio + v2_ratio))
-    
+
     # .copy() isolates each slice in memory to avoid SettingWithCopyWarning and side effects.
     # .reset_index(drop=True) renumbers rows 0..N-1 without adding an extra "index" column to Parquet.
     v1 = df.iloc[:idx1].copy().reset_index(drop=True)
     v2 = df.iloc[idx1:idx2].copy().reset_index(drop=True)
     v3 = df.iloc[idx2:].copy().reset_index(drop=True)
-    
+
     return v1, v2, v3
 
 
@@ -83,17 +83,19 @@ def inject_drift(
     df2 = df.copy().reset_index(drop=True)
     rng = np.random.default_rng(seed)
     noise = rng.normal(loc=0.0, scale=noise_std, size=len(df2))
-    df2["Amount"] = np.clip(df2["Amount"] * amount_scale + noise, 
-                            a_min=0.0,
-                            a_max=None).round(2)
+    df2["Amount"] = np.clip(
+        df2["Amount"] * amount_scale + noise, a_min=0.0, a_max=None
+    ).round(2)
     if not (0.0 <= night_shift_ratio <= 1.0):
         raise ValueError("night_shift_ratio must be between 0.0 and 1.0")
     n_shift = int(len(df2) * night_shift_ratio)
     selected_idx = rng.choice(len(df2), size=n_shift, replace=False)
-    
-    df2.loc[selected_idx,"Time"] = (df2.loc[selected_idx,"Time"] // SECONDS_PER_DAY) * SECONDS_PER_DAY + rng.integers(0, NIGHT_WINDOW_SECONDS, size=n_shift)
+
+    df2.loc[selected_idx, "Time"] = (
+        df2.loc[selected_idx, "Time"] // SECONDS_PER_DAY
+    ) * SECONDS_PER_DAY + rng.integers(0, NIGHT_WINDOW_SECONDS, size=n_shift)
     df2 = df2.sort_values("Time", kind="mergesort").reset_index(drop=True)
-     
+
     return df2
 
 
@@ -103,7 +105,10 @@ def summarize_split(name: str, df: pd.DataFrame) -> dict[str, object]:
         "split": name,
         "rows": len(df),
         "fraud_rate_pct": round(float((df["Class"] == 1).mean() * 100), 3),
-        "night_rate_pct": round(float(((df["Time"] % SECONDS_PER_DAY) < NIGHT_WINDOW_SECONDS).mean() * 100), 3),
+        "night_rate_pct": round(
+            float(((df["Time"] % SECONDS_PER_DAY) < NIGHT_WINDOW_SECONDS).mean() * 100),
+            3,
+        ),
         "amount_mean": round(float((df["Amount"]).mean()), 2),
         "amount_median": round(float((df["Amount"]).median()), 2),
         "time_min": (df["Time"]).min(),
@@ -121,7 +126,8 @@ def save_and_report(splits: dict[str, pd.DataFrame], output_dir: Path) -> None:
         summary.append(summarize_split(output_path, df))
     summary_df = pd.DataFrame(summary)
     print(summary_df.to_string(index=False))
-        
+
+
 def main() -> None:
     args = parse_args()
     df = load_and_sort_data(args.input)
