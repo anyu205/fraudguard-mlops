@@ -1,0 +1,28 @@
+data:
+  input_path: "data/processed/transactions_v1.parquet"
+  output_path: "artifacts/baseline_lgbm.joblib"
+  train_ratio: 0.7
+
+metrics:
+  - "pr_auc"
+  - "roc_auc"
+  - "f1"
+
+model:
+  type: "lightgbm"
+  max_scale_pos_weight: 3.0
+  log_every: 25
+  params:
+    random_state: 42
+    n_estimators: 200
+    learning_rate: 0.03
+    max_depth: 6
+    num_leaves: 15
+    min_child_samples: 50
+    reg_alpha: 1.0
+    reg_lambda: 5.0
+    verbose: -1
+
+evaluation:
+  min_pr_auc: 0.80
+  threshold: 0.5
